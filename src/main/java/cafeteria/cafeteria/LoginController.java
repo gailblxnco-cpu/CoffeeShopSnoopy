@@ -1,6 +1,6 @@
 package cafeteria.cafeteria;
 
-import javafx.event.ActionEvent; // <-- IMPORTANTE
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,55 +10,67 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException; // <-- IMPORTANTE
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class LoginController {
 
     @FXML
-    private TextField nombreField;
+    private TextField usernameField; // Asegúrate que tu FXML use fx:id="usernameField"
 
     @FXML
     private PasswordField passwordField;
 
     @FXML
     private void handleIngresarAction() {
-        System.out.println("✅ Botón Ingresar presionado");
-
-        String nombre = nombreField.getText().trim();
+        String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        // Validación básica
-        if (nombre.isEmpty() || password.isEmpty()) {
-            mostrarAlerta("Error", "Por favor, completa todos los campos.");
+        if (username.isEmpty() || password.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Error", "Por favor, completa todos los campos.");
             return;
         }
 
-        try {
-            // Cargar la vista del menú
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
-            Parent menuView = loader.load();
+        // --- LÓGICA DE BASE DE DATOS ---
+        String sqlLogin = "SELECT usuario_id, nombre FROM Usuarios WHERE username = ? AND password = ?";
 
-            // Obtener el controlador del menú
-            MenuController menuController = loader.getController();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement psLogin = conn.prepareStatement(sqlLogin)) {
 
-            // Pasarle el nombre de usuario
-            menuController.setNombreUsuario(nombre);
+            psLogin.setString(1, username);
+            psLogin.setString(2, password); // Recuerda que esto no es seguro (debería ser hasheado)
 
-            Stage stage = (Stage) nombreField.getScene().getWindow();
-            stage.setScene(new Scene(menuView, 400, 600));
-            stage.show();
+            ResultSet rs = psLogin.executeQuery();
+
+            if (rs.next()) {
+                // ¡Usuario encontrado!
+                int usuarioId = rs.getInt("usuario_id");
+                String nombreUsuario = rs.getString("nombre");
+
+                // Cargar el menú y pasarle los datos del usuario
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
+                Parent menuView = loader.load();
+
+                MenuController menuController = loader.getController();
+                menuController.setUsuario(usuarioId, nombreUsuario); // <-- Pasamos ID y Nombre
+
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                stage.setScene(new Scene(menuView, 400, 600));
+                stage.show();
+
+            } else {
+                // Usuario no encontrado
+                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Nombre de usuario o contraseña incorrectos.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo cargar el menú. Error: " + e.getMessage());
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Conexión", "No se pudo conectar a la base de datos.");
         }
     }
 
-    // --- INICIO DE LA CORRECCIÓN ---
-    /**
-     * Maneja el clic en el enlace "Regístrate aquí",
-     * y navega a la vista de registro.
-     */
     @FXML
     private void handleRegistroLink(ActionEvent event) {
         try {
@@ -68,15 +80,11 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo cargar la vista de registro.");
         }
     }
-    // --- FIN DE LA CORRECCIÓN ---
 
-
-    private void mostrarAlerta(String titulo, String mensaje) {
-        // Cambiado a WARNING para que no sea un error rojo
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+    private void mostrarAlerta(Alert.AlertType type, String titulo, String mensaje) {
+        Alert alert = new Alert(type);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);

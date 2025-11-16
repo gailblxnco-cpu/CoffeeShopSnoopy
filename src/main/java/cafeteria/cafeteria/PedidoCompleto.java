@@ -1,44 +1,41 @@
 package cafeteria.cafeteria;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
- * Representa un pedido completo que ha sido confirmado y enviado.
- * Se usará en el historial.
+ * Clase que representa un pedido completo (una Venta)
+ * para mostrar en el historial. Coincide con la tabla 'Ventas'.
  */
 public class PedidoCompleto {
 
-    private final List<PedidoItem> items;
+    private final int ventaId;
     private final double total;
-    private final String direccion;
-    private final String timestamp;
-    private String estado; // E.g., "En preparación", "En camino", "Entregado"
+    private final Timestamp fechaHora;
+    private final String estado;
 
-    public PedidoCompleto(List<PedidoItem> items, double total, String direccion) {
-        this.items = items;
+    public PedidoCompleto(int ventaId, double total, Timestamp fechaHora, String estado) {
+        this.ventaId = ventaId;
         this.total = total;
-        this.direccion = direccion;
-        // Formatear la fecha y hora actual
-        this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        this.estado = "En preparación"; // Estado inicial
+        this.fechaHora = fechaHora;
+        this.estado = estado;
     }
 
-    // Getters (si los necesitas)
-    public List<PedidoItem> getItems() { return items; }
+    // Getters
+    public int getVentaId() { return ventaId; }
     public double getTotal() { return total; }
-    public String getDireccion() { return direccion; }
-    public String getTimestamp() { return timestamp; }
+    public Timestamp getFechaHora() { return fechaHora; }
     public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
 
     /**
-     * Esto es lo que se mostrará en la lista del Historial.
+     * Esto es lo que se mostrará en la lista del historial.
      */
     @Override
     public String toString() {
-        return String.format("[%s] - %s - $%.2f (%d items)",
-                timestamp, estado, total, items.size());
+        // Formatear la fecha para que sea legible
+        String fechaFormateada = new SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm").format(fechaHora);
+
+        return String.format("Pedido #%d - %s\nTotal: MXN %.2f (%s)",
+                ventaId, fechaFormateada, total, estado);
     }
 }

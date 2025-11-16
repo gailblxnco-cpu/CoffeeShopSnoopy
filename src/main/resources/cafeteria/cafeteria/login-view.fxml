@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
@@ -11,16 +7,14 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 
 <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: #fff5e9; -fx-padding: 20;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cafeteria.cafeteria.LoginController">
     <children>
-        <!-- LOGO SNOOPY GRANDE EN LA PARTE SUPERIOR -->
         <ImageView fitHeight="190" fitWidth="190" preserveRatio="true">
             <image>
                 <Image url="@images/snoopy.png" />
@@ -37,10 +31,11 @@
 
         <VBox alignment="CENTER" prefWidth="300.0" spacing="15.0" style="-fx-padding: 10 0 0 0;">
             <children>
+
                 <VBox spacing="5.0">
                     <children>
                         <Label text="Nombre de usuario" style="-fx-text-fill: #6f594c;" />
-                        <TextField fx:id="nombreField" prefWidth="300.0" promptText="Ingresa tu nombre" />
+                        <TextField fx:id="usernameField" prefWidth="300.0" promptText="Ingresa tu nombre de usuario" />
                     </children>
                 </VBox>
 
@@ -53,7 +48,6 @@
 
                 <Button mnemonicParsing="false" onAction="#handleIngresarAction" prefHeight="35.0" prefWidth="300.0" style="-fx-background-color: #d77836; -fx-text-fill: white; -fx-background-radius: 50; -fx-border-radius: 50;" text="Ingresar" />
 
-                <Label maxWidth="300.0" style="-fx-font-size: 12; -fx-text-fill: #666;" text="Tu nombre será usado para el pedido. " wrapText="true" />
             </children>
         </VBox>
 

@@ -7,6 +7,7 @@ module cafeteria.cafeteria {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires java.sql;
 
     opens cafeteria.cafeteria to javafx.fxml;
     exports cafeteria.cafeteria;

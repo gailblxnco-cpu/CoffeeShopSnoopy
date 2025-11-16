@@ -21,7 +21,30 @@ public class PedidoItem {
         this.precioTotalItem = precioTotalItem;
     }
 
-    // Getters
+    // --- INICIO DE LA CORRECCIÓN ---
+    // Se añaden los getters que faltaban para que
+    // ConfirmarPedidoController pueda leerlos y guardarlos en la BD.
+
+    public String getTamano() {
+        return tamano;
+    }
+
+    public String getLeche() {
+        return leche;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    // --- FIN DE LA CORRECCIÓN ---
+
+
+    // Getters que ya tenías
     public String getNombreBebida() { return nombreBebida; }
     public double getPrecioTotalItem() { return precioTotalItem; }
 

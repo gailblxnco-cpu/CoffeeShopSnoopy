@@ -12,14 +12,17 @@
         <HBox alignment="CENTER_RIGHT" prefWidth="350.0" spacing="10.0" style="-fx-padding: 0 0 10 0;">
             <children>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="navCarritoButton" onAction="#handleIrACarrito" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🛒">
+
+                <Button fx:id="navCarritoButton" onAction="#handleVerCarrito" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🛒">
                     <font><Font size="18.0" /></font>
                 </Button>
-                <Button fx:id="navHistorialButton" onAction="#handleIrAHistorial" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🧾">
+
+                <Button fx:id="navHistorialButton" onAction="#handleVerAHistorial" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🧾">
                     <font><Font size="18.0" /></font>
                 </Button>
             </children>
         </HBox>
+
         <Label fx:id="saludoLabel" style="-fx-font-weight: bold; -fx-text-fill: #6f594c;" text="Hola, ...">
             <font>
                 <Font size="24.0" />

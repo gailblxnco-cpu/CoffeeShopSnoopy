@@ -18,15 +18,21 @@ public class PersonalizarController implements Initializable {
     @FXML private Label tituloLabel;
     @FXML private Label cantidadLabel;
     @FXML private Label totalLabel;
+    @FXML private Button btnConfirmar;
+    @FXML private Button btnMenos;
+    @FXML private Button btnMas;
 
-    // --- OPCIONES DE SUCURSAL ELIMINADAS ---
+    // --- CORRECCIÓN 1: Eliminadas las referencias a radioHidalgo y radioUniversidad ---
     // @FXML private RadioButton radioHidalgo, radioUniversidad;
-
     @FXML private RadioButton radioRegular, radioGrande;
     @FXML private RadioButton radioEntera, radioDeslactosada;
     @FXML private RadioButton radioCaliente, radioFrio;
 
-    // --- TOGGLE GROUP DE SUCURSAL ELIMINADO ---
+    // --- CORRECCIÓN 2: Añadidas las variables para la barra de navegación ---
+    @FXML private Button navCarritoButton;
+    @FXML private Button navHistorialButton;
+
+    // --- CORRECCIÓN 1: Eliminado el ToggleGroup de sucursal ---
     // private final ToggleGroup sucursalToggleGroup = new ToggleGroup();
     private final ToggleGroup tamanoToggleGroup = new ToggleGroup();
     private final ToggleGroup lecheToggleGroup = new ToggleGroup();
@@ -36,6 +42,7 @@ public class PersonalizarController implements Initializable {
     private double precioBase;
     private double precioTotal;
     private String nombreBebida;
+    private int usuarioId;
     private String nombreUsuario;
 
     @Override
@@ -44,7 +51,8 @@ public class PersonalizarController implements Initializable {
         configurarEventos();
     }
 
-    public void setNombreUsuario(String nombre) {
+    public void setUsuario(int usuarioId, String nombre) {
+        this.usuarioId = usuarioId;
         this.nombreUsuario = nombre;
     }
 
@@ -56,7 +64,7 @@ public class PersonalizarController implements Initializable {
     }
 
     private void configurarToggleGroups() {
-        // --- CONFIGURACIÓN DE SUCURSAL ELIMINADA ---
+        // --- CORRECCIÓN 1: Eliminada la línea de sucursal ---
         // radioHidalgo.setToggleGroup(sucursalToggleGroup); radioUniversidad.setToggleGroup(sucursalToggleGroup); radioHidalgo.setSelected(true);
 
         radioRegular.setToggleGroup(tamanoToggleGroup); radioGrande.setToggleGroup(tamanoToggleGroup); radioRegular.setSelected(true);
@@ -91,6 +99,7 @@ public class PersonalizarController implements Initializable {
         if (totalLabel != null) totalLabel.setText(String.format("MXN %.2f", precioTotal));
     }
 
+
     @FXML
     private void handleAnadirAlCarrito(ActionEvent event) {
         try {
@@ -114,41 +123,22 @@ public class PersonalizarController implements Initializable {
 
             Carrito.agregarItem(nuevoItem);
 
-            regresarAlMenu(event);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
+            Parent menuView = loader.load();
+            MenuController menuController = loader.getController();
+            menuController.setUsuario(this.usuarioId, this.nombreUsuario);
 
-        } catch (Exception e) {
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(menuView, 400, 600));
+            stage.show();
+
+        } catch (IOException e) {
             e.printStackTrace();
             mostrarError("Error al añadir al carrito: " + e.getMessage());
         }
     }
 
-    // --- NUEVO: Método para volver al menú (para reducir duplicados) ---
-    private void regresarAlMenu(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
-            Parent menuView = loader.load();
-            MenuController menuController = loader.getController();
-            menuController.setNombreUsuario(nombreUsuario);
-
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(menuView, 400, 600));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            mostrarError("Error al regresar al menú.");
-        }
-    }
-
-
-    private void mostrarError(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    // --- MÉTODOS DE NAVEGACIÓN GLOBAL ---
+    // --- CORRECCIÓN 2: Métodos de navegación superior añadidos ---
 
     @FXML
     private void handleIrACarrito(ActionEvent event) {
@@ -156,13 +146,14 @@ public class PersonalizarController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("carrito-view.fxml"));
             Parent view = loader.load();
             CarritoController controller = loader.getController();
-            controller.setNombreUsuario(this.nombreUsuario);
+            controller.setUsuario(this.usuarioId, this.nombreUsuario); // Pass user data
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(view, 400, 600));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            mostrarError("No se pudo cargar el carrito.");
         }
     }
 
@@ -172,13 +163,23 @@ public class PersonalizarController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("historial-view.fxml"));
             Parent view = loader.load();
             HistorialController controller = loader.getController();
-            controller.setNombreUsuario(this.nombreUsuario);
+            controller.setUsuario(this.usuarioId, this.nombreUsuario); // Pass user data
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(view, 400, 600));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            mostrarError("No se pudo cargar el historial.");
         }
+    }
+    // --- FIN DE LA CORRECCIÓN ---
+
+    private void mostrarError(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
